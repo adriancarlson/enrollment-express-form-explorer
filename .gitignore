@@ -1,0 +1,27 @@
+# Private reference material and local results
+/local/
+/private/
+/attachments/
+/exports/
+/reference-materials/
+/tmp/
+*.pdf
+
+# Local credentials and machine settings
+.env
+.env.*
+!.env.example
+
+# Generated caches and dependencies
+__pycache__/
+*.py[cod]
+.venv/
+node_modules/
+
+# Build artifacts and operating-system files
+/dist/
+/build/
+*.zip
+.DS_Store
+Thumbs.db
+Desktop.ini
