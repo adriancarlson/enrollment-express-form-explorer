@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permission_mappings>
+    <permission name="/admin/enrollment_express_form_explorer/home.html">
+        <implies allow="post">/ws/schema/query/com.adriancarlson.enrollment.formexplorer.forms</implies>
+        <implies allow="post">/ws/schema/query/com.adriancarlson.enrollment.formexplorer.rules</implies>
+        <implies allow="post">/ws/schema/query/com.adriancarlson.enrollment.formexplorer.questions</implies>
+    </permission>
+</permission_mappings>

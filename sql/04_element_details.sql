@@ -79,7 +79,12 @@ SELECT
     e.reserved6 AS show_contact_type,
     e.reserved7 AS enable_custody,
     e.reserved8 AS enable_school_pickup,
-    e.reserved9 AS receives_mail
+    e.reserved9 AS receives_mail,
+    d.calculatecontacttype AS calculate_contact_type,
+    d.conditionalupdateofcontact AS conditional_update_non_custodial,
+    d.restrict_apply_contacts,
+    d.auto_approve_all_responses,
+    d.create_new_contacts AS create_new_contacts_for_potential_matches
 FROM u_fb_form f
 JOIN u_fb_form_element e ON e.u_fb_form_id = f.id
 LEFT JOIN u_fb_contacts_detail d ON d.element_id = e.id

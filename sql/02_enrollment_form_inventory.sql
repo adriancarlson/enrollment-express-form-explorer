@@ -29,6 +29,11 @@ sharing_summary AS (
         s.form_id,
         SUM(CASE WHEN LOWER(TRIM(s.share_type)) = 'school'
                  THEN 1 ELSE 0 END) AS school_rule_count,
+        COUNT(DISTINCT CASE WHEN LOWER(TRIM(s.share_type)) = 'school'
+                            THEN TRIM(s.share_value) END)
+            AS distinct_school_value_count,
+        SUM(CASE WHEN LOWER(TRIM(s.share_type)) = 'condition'
+                 THEN 1 ELSE 0 END) AS condition_rule_count,
         SUM(CASE WHEN LOWER(TRIM(s.share_type)) = 'student'
                  THEN 1 ELSE 0 END) AS student_rule_count,
         XMLCAST(XMLAGG(
@@ -88,11 +93,18 @@ SELECT
     f.school_id AS form_owning_school_id,
     f.use_by_school_sharing,
     NVL(ss.school_rule_count, 0) AS school_rule_count,
+    NVL(ss.distinct_school_value_count, 0) AS distinct_school_value_count,
     CASE
+        WHEN LOWER(TRIM(f.use_by_school_sharing)) = 'true'
+             AND NVL(ss.school_rule_count, 0) > 0
+            THEN 'School sharing enabled; inspect configured rules'
+        WHEN LOWER(TRIM(f.use_by_school_sharing)) = 'true'
+            THEN 'School sharing enabled; no school rows returned'
         WHEN NVL(ss.school_rule_count, 0) > 0
-            THEN 'School sharing rows present; inspect rules'
+            THEN 'School rows configured; use-by-school flag is false'
         ELSE 'No school sharing rows; scope not established'
     END AS school_scope_evidence,
+    NVL(ss.condition_rule_count, 0) AS condition_rule_count,
     NVL(ss.student_rule_count, 0) AS student_rule_count,
     ss.form_sharing_rules,
     f.sharing_parent,

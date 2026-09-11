@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+    <query name="com.adriancarlson.enrollment.formexplorer.forms" flattened="true">
+        <summary>Enrollment Express Form Explorer: Forms</summary>
+        <description>Returns read-only configuration metadata for forms marked as enrollment forms.</description>
+        <columns>
+            <column column="u_fb_form.id">form_id</column>
+            <column column="u_fb_form.form_title">form_title</column>
+            <column column="u_fb_form.form_category">form_category</column>
+            <column column="u_fb_form.form_type">form_type</column>
+            <column column="u_fb_form.publish">publish</column>
+            <column column="u_fb_form.use_by_school_sharing">use_by_school_sharing</column>
+            <column column="u_fb_form.sharing_parent">sharing_parent</column>
+            <column column="u_fb_form_element.id">element_count</column>
+            <column column="u_fb_form_sharing.form_id">school_rule_count</column>
+            <column column="u_fb_form_sharing.share_value">distinct_school_value_count</column>
+            <column column="u_fb_form_sharing.share_type">condition_rule_count</column>
+        </columns>
+        <sql><![CDATA[
+            SELECT
+                f.id,
+                TRIM(f.form_title) AS form_title,
+                f.form_category,
+                f.form_type,
+                f.publish,
+                f.use_by_school_sharing,
+                f.sharing_parent,
+                (SELECT COUNT(*) FROM u_fb_form_element e
+                  WHERE e.u_fb_form_id = f.id) AS element_count,
+                (SELECT COUNT(*) FROM u_fb_form_sharing s
+                  WHERE s.form_id = f.id
+                    AND LOWER(TRIM(s.share_type)) = 'school') AS school_rule_count,
+                (SELECT COUNT(DISTINCT TRIM(s.share_value))
+                   FROM u_fb_form_sharing s
+                  WHERE s.form_id = f.id
+                    AND LOWER(TRIM(s.share_type)) = 'school') AS distinct_school_value_count,
+                (SELECT COUNT(*) FROM u_fb_form_sharing s
+                  WHERE s.form_id = f.id
+                    AND LOWER(TRIM(s.share_type)) = 'condition') AS condition_rule_count
+            FROM u_fb_form f
+            WHERE LOWER(TRIM(f.enrollmentformcheck)) = 'true'
+            ORDER BY f.form_category NULLS LAST, f.form_title, f.id
+        ]]></sql>
+    </query>
+
+    <query name="com.adriancarlson.enrollment.formexplorer.rules" flattened="true">
+        <summary>Enrollment Express Form Explorer: Sharing Rules</summary>
+        <description>Returns individual school, condition, and role rules for enrollment forms.</description>
+        <columns>
+            <column column="u_fb_form.id">form_id</column>
+            <column column="u_fb_form.form_title">form_title</column>
+            <column column="u_fb_form.use_by_school_sharing">use_by_school_sharing</column>
+            <column column="u_fb_form_sharing.id">sharing_rule_id</column>
+            <column column="u_fb_form_sharing.share_type">share_type</column>
+            <column column="u_fb_form_sharing.share_permission">field_or_permission</column>
+            <column column="u_fb_form_sharing.share_comparator">share_comparator</column>
+            <column column="u_fb_form_sharing.share_value">share_value</column>
+            <column column="u_fb_form_sharing.edit_form">edit_form</column>
+        </columns>
+        <sql><![CDATA[
+            SELECT
+                f.id AS form_id,
+                TRIM(f.form_title) AS form_title,
+                f.use_by_school_sharing,
+                s.id AS sharing_rule_id,
+                s.share_type,
+                s.share_permission AS field_or_permission,
+                s.share_comparator,
+                s.share_value,
+                s.edit_form
+            FROM u_fb_form f
+            JOIN u_fb_form_sharing s ON s.form_id = f.id
+            WHERE LOWER(TRIM(f.enrollmentformcheck)) = 'true'
+            ORDER BY f.form_title, f.id, s.share_type, s.id
+        ]]></sql>
+    </query>
+
+    <query name="com.adriancarlson.enrollment.formexplorer.questions" flattened="true">
+        <summary>Enrollment Express Form Explorer: Questions</summary>
+        <description>Returns stored elements and direct workflow information for enrollment forms.</description>
+        <columns>
+            <column column="u_fb_form.id">form_id</column>
+            <column column="u_fb_form.form_title">form_title</column>
+            <column column="u_fb_form.publish">form_publish</column>
+            <column column="u_fb_form_element.id">element_id</column>
+            <column column="u_fb_form_element.position">stored_position</column>
+            <column column="u_fb_form_element.element_type">element_type</column>
+            <column column="u_fb_form_element.title">question_title</column>
+            <column column="u_fb_form_element.description">question_description</column>
+            <column column="u_fb_form_element.required">required</column>
+            <column column="u_fb_form_element.student_field">mapped_write_field</column>
+            <column column="u_fb_form_element.wf_enabled">wf_enabled</column>
+            <column column="u_fb_form_element.wf_element_id">controlling_element_id</column>
+            <column column="u_fb_form_element.title">controlling_question</column>
+            <column column="u_fb_form_element.wf_value">workflow_trigger_values</column>
+            <column column="u_fb_form_element.wf_enabled">controller_wf_enabled</column>
+            <column column="u_fb_form_element.containerenabled">container_enabled</column>
+            <column column="u_fb_form_element.containerid">container_id</column>
+            <column column="u_fb_form_element.containercolumn">container_column</column>
+            <column column="u_fb_form_element.containerposition">container_position</column>
+        </columns>
+        <sql><![CDATA[
+            SELECT
+                f.id AS form_id,
+                TRIM(f.form_title) AS form_title,
+                f.publish AS form_publish,
+                e.id AS element_id,
+                e.position AS stored_position,
+                e.element_type,
+                e.title AS question_title,
+                e.description AS question_description,
+                e.required,
+                e.student_field AS mapped_write_field,
+                e.wf_enabled,
+                e.wf_element_id AS controlling_element_id,
+                controller.title AS controlling_question,
+                e.wf_value AS workflow_trigger_values,
+                controller.wf_enabled AS controller_wf_enabled,
+                e.containerenabled AS container_enabled,
+                e.containerid AS container_id,
+                e.containercolumn AS container_column,
+                e.containerposition AS container_position
+            FROM u_fb_form f
+            JOIN u_fb_form_element e ON e.u_fb_form_id = f.id
+            LEFT JOIN u_fb_form_element controller ON controller.id = e.wf_element_id
+            WHERE LOWER(TRIM(f.enrollmentformcheck)) = 'true'
+            ORDER BY f.form_title, f.id,
+                CASE WHEN REGEXP_LIKE(TRIM(e.position), '^[0-9]{1,9}$')
+                     THEN TO_NUMBER(TRIM(e.position)) END NULLS LAST,
+                e.position NULLS LAST, e.id
+        ]]></sql>
+    </query>
+</queries>

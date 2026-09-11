@@ -27,6 +27,12 @@ SELECT
     (SELECT COUNT(*) FROM u_fb_form_sharing s
       WHERE s.form_id = f.id AND LOWER(TRIM(s.share_type)) = 'school')
         AS school_rule_count,
+    (SELECT COUNT(DISTINCT TRIM(s.share_value)) FROM u_fb_form_sharing s
+      WHERE s.form_id = f.id AND LOWER(TRIM(s.share_type)) = 'school')
+        AS distinct_school_value_count,
+    (SELECT COUNT(*) FROM u_fb_form_sharing s
+      WHERE s.form_id = f.id AND LOWER(TRIM(s.share_type)) = 'condition')
+        AS condition_rule_count,
     (SELECT COUNT(*) FROM u_fb_form_sharing s
       WHERE s.form_id = f.id AND LOWER(TRIM(s.share_type)) = 'student')
         AS student_rule_count

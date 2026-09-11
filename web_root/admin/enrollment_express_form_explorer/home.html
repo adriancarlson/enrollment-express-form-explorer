@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enrollment Express Form Explorer</title>
+    ~[wc:commonscripts]
+    <link href="/images/css/screen.css" rel="stylesheet" media="screen">
+    <link href="/images/css/print.css" rel="stylesheet" media="print">
+</head>
+<body data-require-path="components/enrollment_express_form_explorer/index"
+      data-module-name="enrollmentExpressFormExplorerModule"
+      data-bootstrap-local="true"
+      data-ng-controller="formExplorerController as vm"
+      data-ng-cloak>
+    ~[wc:admin_header_css]
+    ~[wc:admin_navigation_css]
+
+    <h1>Enrollment Express Form Explorer</h1>
+
+    <div data-ng-if="vm.loading">
+        <div class="progress" data-pss-wait-spinner></div>
+        <div class="feedback-info">Loading enrollment form configuration...</div>
+    </div>
+
+    <div class="feedback-alert" data-ng-if="vm.loadError">
+        The form inventory could not be loaded.
+        <button type="button" data-ng-click="vm.retry()">Try Again</button>
+    </div>
+
+    <div data-ng-if="!vm.loading &amp;&amp; !vm.loadError">
+        <div class="button-row">
+            <button type="button" data-ng-click="vm.showView('forms')"
+                    data-ng-disabled="vm.activeView === 'forms'">
+                Forms ({{vm.forms.length}})
+            </button>
+            <button type="button" data-ng-click="vm.showView('questions')"
+                    data-ng-disabled="vm.activeView === 'questions'">
+                Questions and Elements ({{vm.questions.length}})
+            </button>
+            <button type="button" data-ng-click="vm.showView('rules')"
+                    data-ng-disabled="vm.activeView === 'rules'">
+                Rules ({{vm.rules.length}})
+            </button>
+        </div>
+
+        <div id="enrollment-rule-grid"
+             data-ng-if="vm.activeView === 'rules'"
+             data-pss-grid-widget
+             data-data="vm.rules"
+             data-filtered-data="vm.visibleRules"
+             data-filtertap-data-sorted="vm.matchingRules"
+             data-client-side-pagination="true"
+             data-persist-rows-per-page="true"
+             data-item-type-text="Rules">
+            <table class="grid">
+                <thead>
+                    <tr>
+                        <th data-pss-sort-fields="form_title,share_type,sharing_rule_id|number"
+                            data-primary-sort="ascending">Form</th>
+                        <th data-pss-sort-fields="share_type|select"
+                            data-filter-info="vm.ruleTypeMap">Rule type</th>
+                        <th data-pss-sort-fields="field_or_permission">Field or permission</th>
+                        <th data-pss-sort-fields="share_comparator">Comparator</th>
+                        <th data-pss-sort-fields="share_value">Value</th>
+                        <th data-pss-sort-fields="school_rule_status">School-rule status</th>
+                        <th data-pss-sort-fields="edit_form">Edit form</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="rule in vm.visibleRules track by rule.sharing_rule_id">
+                        <td data-ng-bind="rule.form_title"></td>
+                        <td data-ng-bind="rule.share_type"></td>
+                        <td data-ng-bind="rule.field_or_permission"></td>
+                        <td data-ng-bind="rule.share_comparator"></td>
+                        <td data-ng-bind="rule.share_value"></td>
+                        <td data-ng-bind="rule.school_rule_status"></td>
+                        <td data-ng-bind="rule.edit_form"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="feedback-info">
+            School and condition columns describe stored configuration. They do
+            not evaluate visibility for an individual student.
+        </div>
+
+        <div id="enrollment-form-grid"
+             data-ng-if="vm.activeView === 'forms'"
+             data-pss-grid-widget
+             data-data="vm.forms"
+             data-filtered-data="vm.visibleForms"
+             data-filtertap-data-sorted="vm.matchingForms"
+             data-client-side-pagination="true"
+             data-persist-rows-per-page="true"
+             data-item-type-text="Forms">
+            <table class="grid">
+                <thead>
+                    <tr>
+                        <th data-pss-sort-fields="form_title" data-primary-sort="ascending">Form</th>
+                        <th data-pss-sort-fields="form_category">Category</th>
+                        <th data-pss-sort-fields="form_type">Type</th>
+                        <th data-pss-sort-fields="published_display|select"
+                            data-filter-info="vm.yesNoMap">Published</th>
+                        <th data-pss-sort-fields="element_count|number">Elements</th>
+                        <th data-pss-sort-fields="school_scope_status|select"
+                            data-filter-info="vm.schoolScopeMap">School-rule status</th>
+                        <th data-pss-sort-fields="distinct_school_value_count|number">Distinct school values</th>
+                        <th data-pss-sort-fields="condition_rule_count|number">Conditions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="form in vm.visibleForms track by form.form_id">
+                        <td data-ng-bind="form.form_title"></td>
+                        <td data-ng-bind="form.form_category"></td>
+                        <td data-ng-bind="form.form_type"></td>
+                        <td data-ng-bind="form.published_display"></td>
+                        <td data-ng-bind="form.element_count"></td>
+                        <td data-ng-bind="form.school_scope_status"></td>
+                        <td data-ng-bind="form.distinct_school_value_count"></td>
+                        <td data-ng-bind="form.condition_rule_count"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="enrollment-question-grid"
+             data-ng-if="vm.activeView === 'questions'"
+             data-pss-grid-widget
+             data-data="vm.questions"
+             data-filtered-data="vm.visibleQuestions"
+             data-filtertap-data-sorted="vm.matchingQuestions"
+             data-client-side-pagination="true"
+             data-persist-rows-per-page="true"
+             data-item-type-text="Questions and Elements">
+            <table class="grid">
+                <thead>
+                    <tr>
+                        <th data-pss-sort-fields="form_title,numeric_position|number,element_id|number"
+                            data-primary-sort="ascending">Form</th>
+                        <th data-pss-sort-fields="numeric_position|number,element_id|number">Position</th>
+                        <th data-pss-sort-fields="question_title">Question or element</th>
+                        <th data-pss-sort-fields="question_description">Description</th>
+                        <th data-pss-sort-fields="element_type|select"
+                            data-filter-info="vm.elementTypeMap">Type</th>
+                        <th data-pss-sort-fields="required_display|select"
+                            data-filter-info="vm.yesNoMap">Required</th>
+                        <th data-pss-sort-fields="mapped_write_field">Mapped field</th>
+                        <th data-pss-sort-fields="dependency_status|select"
+                            data-filter-info="vm.dependencyMap">Display dependency</th>
+                        <th data-pss-sort-fields="controlling_question">Controller</th>
+                        <th data-pss-sort-fields="workflow_trigger_values">Trigger value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-ng-repeat="question in vm.visibleQuestions track by question.element_id">
+                        <td data-ng-bind="question.form_title"></td>
+                        <td data-ng-bind="question.stored_position"></td>
+                        <td data-ng-bind="question.question_title"></td>
+                        <td data-ng-bind="question.question_description"></td>
+                        <td data-ng-bind="question.element_type"></td>
+                        <td data-ng-bind="question.required_display"></td>
+                        <td data-ng-bind="question.mapped_write_field"></td>
+                        <td data-ng-bind="question.dependency_status"></td>
+                        <td data-ng-bind="question.controlling_question"></td>
+                        <td data-ng-bind="question.workflow_trigger_values"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="feedback-info" data-ng-if="vm.activeView === 'forms' &amp;&amp; !vm.forms.length">
+            No forms marked as Enrollment Forms were returned.
+        </div>
+        <div class="feedback-info" data-ng-if="vm.activeView === 'questions' &amp;&amp; !vm.questions.length">
+            No stored elements were returned.
+        </div>
+        <div class="feedback-info" data-ng-if="vm.activeView === 'rules' &amp;&amp; !vm.rules.length">
+            No sharing rules were returned.
+        </div>
+    </div>
+
+    ~[wc:admin_footer_css]
+</body>
+</html>

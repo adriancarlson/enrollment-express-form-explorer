@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://plugin.powerschool.pearson.com"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd"
+    version="0.1.0"
+    name="Enrollment Express Form Explorer"
+    description="Read-only explorer for Enrollment Express forms, questions, school rules, and display conditions">
+    <publisher name="Adrian Carlson" />
+    <access_request>
+        <field table="u_fb_form" field="id" access="FullAccess" />
+        <field table="u_fb_form" field="form_title" access="FullAccess" />
+        <field table="u_fb_form" field="form_category" access="FullAccess" />
+        <field table="u_fb_form" field="form_type" access="FullAccess" />
+        <field table="u_fb_form" field="enrollmentformcheck" access="FullAccess" />
+        <field table="u_fb_form" field="publish" access="FullAccess" />
+        <field table="u_fb_form" field="use_by_school_sharing" access="FullAccess" />
+        <field table="u_fb_form" field="sharing_parent" access="FullAccess" />
+        <field table="u_fb_form_element" field="id" access="FullAccess" />
+        <field table="u_fb_form_element" field="u_fb_form_id" access="FullAccess" />
+        <field table="u_fb_form_element" field="position" access="FullAccess" />
+        <field table="u_fb_form_element" field="element_type" access="FullAccess" />
+        <field table="u_fb_form_element" field="title" access="FullAccess" />
+        <field table="u_fb_form_element" field="description" access="FullAccess" />
+        <field table="u_fb_form_element" field="required" access="FullAccess" />
+        <field table="u_fb_form_element" field="student_field" access="FullAccess" />
+        <field table="u_fb_form_element" field="wf_enabled" access="FullAccess" />
+        <field table="u_fb_form_element" field="wf_element_id" access="FullAccess" />
+        <field table="u_fb_form_element" field="wf_value" access="FullAccess" />
+        <field table="u_fb_form_element" field="containerenabled" access="FullAccess" />
+        <field table="u_fb_form_element" field="containerid" access="FullAccess" />
+        <field table="u_fb_form_element" field="containercolumn" access="FullAccess" />
+        <field table="u_fb_form_element" field="containerposition" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="form_id" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="share_type" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="share_permission" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="share_comparator" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="share_value" access="FullAccess" />
+        <field table="u_fb_form_sharing" field="edit_form" access="FullAccess" />
+    </access_request>
+</plugin>
