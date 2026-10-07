@@ -42,6 +42,29 @@ define(function(require) {
                 'No direct workflow': 'No direct workflow'
             };
             vm.elementTypeMap = {};
+            vm.elementTypeLabels = {
+                checkbox: 'Checkbox',
+                collection: 'Collection',
+                contacts: 'Contacts',
+                document: 'Document',
+                dropdown: 'Dropdown',
+                ecollection: 'E Collection',
+                enhancedevent: 'Enhanced Event',
+                event: 'Event',
+                hidden: 'Hidden',
+                multidd: 'Dropdown',
+                paragraph: 'Paragraph',
+                pinpassword: 'PIN Password',
+                pstag: 'PS Tag',
+                race: 'Race',
+                radio: 'Radio',
+                responselist: 'Response List',
+                sbscontainer: 'Container',
+                sectionbreak: 'Section Break',
+                sisdocument: 'SIS Document',
+                text: 'Text',
+                textblock: 'Text Block'
+            };
             vm.ruleTypeMap = {};
             vm.formMaps = {
                 forms: {},
@@ -102,6 +125,11 @@ define(function(require) {
                 question.form_filter = question.form_title;
                 question.form_display_order = asNumber(question.form_display_order);
                 question.element_id = asNumber(question.element_id);
+                question.element_type_display = vm.elementTypeLabels[
+                    String(question.element_type || '').toLowerCase()
+                ] || String(question.element_type || '').replace(/\b\w/g, function(character) {
+                    return character.toUpperCase();
+                });
                 question.numeric_position = /^\d+$/.test(String(question.stored_position || '')) ?
                     asNumber(question.stored_position) : null;
                 question.required_display = normalizeBoolean(question.required);
@@ -245,8 +273,8 @@ define(function(require) {
                         }
                     });
                     angular.forEach(vm.allQuestions, function(question) {
-                        if (question.element_type) {
-                            vm.elementTypeMap[question.element_type] = question.element_type;
+                        if (question.element_type_display) {
+                            vm.elementTypeMap[question.element_type_display] = question.element_type_display;
                         }
                     });
                     vm.applyVisibilityFilters();

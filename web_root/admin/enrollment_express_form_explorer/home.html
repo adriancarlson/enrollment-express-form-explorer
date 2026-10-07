@@ -259,7 +259,7 @@
                         <th data-pss-sort-fields="numeric_position|number,element_id|number">Display order</th>
                         <th data-pss-sort-fields="question_title">Question or element</th>
                         <th data-pss-sort-fields="question_description">Description</th>
-                        <th data-pss-sort-fields="element_type|select"
+                        <th data-pss-sort-fields="element_type_display|select"
                             data-filter-info="vm.elementTypeMap">Type</th>
                         <th data-pss-sort-fields="required_display|select"
                             data-filter-info="vm.yesNoMap">Required</th>
@@ -276,7 +276,7 @@
                         <td data-ng-bind="question.numeric_position"></td>
                         <td data-ng-bind="question.question_title"></td>
                         <td data-ng-bind="question.question_description"></td>
-                        <td data-ng-bind="question.element_type"></td>
+                        <td data-ng-bind="question.element_type_display"></td>
                         <td data-ng-bind="question.required_display"></td>
                         <td data-ng-bind="question.mapped_write_field"></td>
                         <td data-ng-bind="question.dependency_status"></td>
