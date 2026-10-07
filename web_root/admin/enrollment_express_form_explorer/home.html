@@ -5,6 +5,61 @@
     ~[wc:commonscripts]
     <link href="/images/css/screen.css" rel="stylesheet" media="screen">
     <link href="/images/css/print.css" rel="stylesheet" media="print">
+    <style>
+        .explorer-switch-row {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 1rem;
+        }
+
+        .explorer-switch-row .form-check {
+            display: block;
+            min-height: 1.5rem;
+            margin-bottom: 0.125rem;
+            padding-left: 2.5rem;
+        }
+
+        .explorer-switch-row .form-check-input {
+            appearance: none;
+            background-color: #d8d8d8;
+            background-position: left center;
+            background-repeat: no-repeat;
+            background-size: contain;
+            border: 1px solid rgba(0, 0, 0, 0.25);
+            border-radius: 2em;
+            float: left;
+            height: 14px;
+            margin-left: -2.5rem;
+            margin-top: 0.25rem;
+            position: relative;
+            width: 28px;
+        }
+
+        .explorer-switch-row .form-check-input::before {
+            background-color: #fff;
+            border-radius: 50%;
+            content: "";
+            height: 10px;
+            left: 1px;
+            position: absolute;
+            top: 1px;
+            transition: left 0.15s ease-in-out;
+            width: 10px;
+        }
+
+        .explorer-switch-row .form-check-input:checked {
+            background-color: #0066a5;
+            border-color: #0066a5;
+        }
+
+        .explorer-switch-row .form-check-input:checked::before {
+            left: 15px;
+        }
+
+        .explorer-switch-row .form-check-label {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body data-require-path="components/enrollment_express_form_explorer/index"
       data-module-name="enrollmentExpressFormExplorerModule"
@@ -16,13 +71,13 @@
 
     <h1>Enrollment Express Form Explorer</h1>
 
-    <div class="box-round">
-        <label class="switch switch-hide-box">
-            <input type="checkbox" data-ng-model="vm.showUnpublished"
+    <div class="explorer-switch-row">
+        <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" id="showUnpublishedSwitch"
+                   data-ng-model="vm.showUnpublished"
                    data-ng-change="vm.applyPublicationFilter()">
-            <span class="slider round"></span>
-        </label>
-        <strong>Show Unpublished</strong>
+            <label class="form-check-label" for="showUnpublishedSwitch">Show Unpublished</label>
+        </div>
     </div>
 
     <div data-ng-if="vm.loading">
@@ -114,7 +169,10 @@
                 </thead>
                 <tbody>
                     <tr data-ng-repeat="form in vm.visibleForms track by form.form_id">
-                        <td data-ng-bind="form.form_title"></td>
+                        <td>
+                            <a data-ng-href="/admin/formbuilder/edit.html?formid={{form.form_id}}"
+                               data-ng-bind="form.form_title"></a>
+                        </td>
                         <td data-ng-bind="form.form_category"></td>
                         <td data-ng-bind="form.form_type"></td>
                         <td data-ng-bind="form.published_display"></td>
@@ -139,7 +197,7 @@
             <table class="grid">
                 <thead>
                     <tr>
-                        <th data-pss-sort-fields="form_chain_id|number,form_display_order|number,numeric_position|number,element_id|number"
+                        <th data-pss-sort-fields="form_display_order|number,numeric_position|number,element_id|number"
                             data-primary-sort="ascending">Form</th>
                         <th data-pss-sort-fields="numeric_position|number,element_id|number">Position</th>
                         <th data-pss-sort-fields="question_title">Question or element</th>

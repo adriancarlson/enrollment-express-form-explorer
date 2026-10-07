@@ -75,7 +75,6 @@ define(function(require) {
 
             function normalizeQuestion(question) {
                 question.form_id = asNumber(question.form_id);
-                question.form_chain_id = asNumber(question.form_chain_id);
                 question.form_display_order = asNumber(question.form_display_order);
                 question.element_id = asNumber(question.element_id);
                 question.numeric_position = /^\d+$/.test(String(question.stored_position || '')) ?
