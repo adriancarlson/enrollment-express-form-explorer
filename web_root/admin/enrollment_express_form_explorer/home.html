@@ -71,10 +71,6 @@
             z-index: 10;
         }
 
-        .explorer-element-id {
-            font-size: 0.85em;
-            font-style: italic;
-        }
     </style>
 </head>
 <body data-require-path="components/enrollment_express_form_explorer/index"
@@ -283,10 +279,8 @@
                         <td data-ng-bind="question.required_display"></td>
                         <td data-ng-bind="question.mapped_write_field"></td>
                         <td>
-                            <div data-ng-bind="question.controlling_question"></div>
-                            <div class="explorer-element-id" data-ng-if="question.controlling_question">
-                                Element ID: <span data-ng-bind="question.controlling_element_id"></span>
-                            </div>
+                            <div data-ng-bind="question.controlling_question"
+                                 data-ng-attr-title="{{question.controlling_question ? 'Element ID: ' + question.controlling_element_id : undefined}}"></div>
                         </td>
                         <td data-ng-bind="question.workflow_trigger_values"></td>
                     </tr>
