@@ -23,6 +23,11 @@ configuration rather than hard-coded values.
 
 ## Current SQL tools
 
+The `sql/` folder contains standalone SQL Studio inventory and diagnostic
+queries used to research and validate Enrollment Express metadata. The installed
+dashboard does not load these files. They remain in source for maintainers and
+are excluded from the PowerSchool plugin ZIP.
+
 | File | Purpose |
 | --- | --- |
 | [01_form_scope_check.sql](sql/01_form_scope_check.sql) | List form definitions and check which carry the Enrollment Form flag. |
@@ -93,6 +98,13 @@ Keep district exports, private notes, vendor documentation, credentials, and
 temporary files outside the published source. The ignored `local/` directory
 can hold private reference material when needed. Vendor documentation and
 district-specific validation results are not included in this repository.
+
+## Build
+
+Run `./build.ps1` from PowerShell. The build uses a strict allowlist and packages
+only `plugin.xml`, `pagecataloging/`, and `web_root/`. Repository support files,
+including `.vscode/`, `.gitignore`, `AGENTS.md`, `README.md`, `docs/`, `sql/`,
+and local reference material, cannot enter the generated plugin ZIP.
 
 ## License
 

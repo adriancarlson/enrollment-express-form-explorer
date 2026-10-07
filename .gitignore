@@ -17,6 +17,7 @@ __pycache__/
 *.py[cod]
 .venv/
 node_modules/
+.vscode/
 
 # Build artifacts and operating-system files
 /dist/
