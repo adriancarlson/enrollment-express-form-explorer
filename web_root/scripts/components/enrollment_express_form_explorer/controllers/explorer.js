@@ -195,6 +195,8 @@ define(function(require) {
                     question.visual_parent_position = sortNumber(
                         parentQuestion ? parentQuestion.stored_position : question.stored_position
                     );
+                    question.is_container = String(question.element_type || '').toLowerCase() === 'sbscontainer';
+                    question.is_container_child = !!parentQuestion;
                     question.visual_child_rank = parentQuestion ? 1 : 0;
                     question.visual_container_column = sortNumber(question.container_column);
                     question.visual_container_row = parentQuestion ?
