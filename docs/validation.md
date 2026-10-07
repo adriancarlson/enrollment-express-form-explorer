@@ -134,8 +134,8 @@ as complete effective availability.
 
 ## Suggested live validation
 
-1. Sign in as a district administrator at District Office and confirm the
-   Functions-page link is visible; confirm it is absent in a school context.
+1. At District Office, confirm the page-cataloged Data and Reporting link is
+   visible; confirm the link is absent in a school context.
 2. Open `forms.json`, `rules.json`, and `questions.json` and confirm each returns
    a complete, valid JSON array, including `[]` when no records match.
 3. Compare query 01 with the intended enrollment form list.
