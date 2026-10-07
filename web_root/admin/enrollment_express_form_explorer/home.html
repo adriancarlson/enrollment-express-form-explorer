@@ -16,6 +16,15 @@
 
     <h1>Enrollment Express Form Explorer</h1>
 
+    <div class="box-round">
+        <label class="switch switch-hide-box">
+            <input type="checkbox" data-ng-model="vm.showUnpublished"
+                   data-ng-change="vm.applyPublicationFilter()">
+            <span class="slider round"></span>
+        </label>
+        <strong>Show Unpublished</strong>
+    </div>
+
     <div data-ng-if="vm.loading">
         <div class="progress" data-pss-wait-spinner></div>
         <div class="feedback-info">Loading enrollment form configuration...</div>
@@ -28,13 +37,13 @@
 
     <div data-ng-if="!vm.loading &amp;&amp; !vm.loadError">
         <div class="button-row">
-            <button type="button" data-ng-click="vm.showView('forms')"
-                    data-ng-disabled="vm.activeView === 'forms'">
-                Forms ({{vm.forms.length}})
-            </button>
             <button type="button" data-ng-click="vm.showView('questions')"
                     data-ng-disabled="vm.activeView === 'questions'">
                 Questions and Elements ({{vm.questions.length}})
+            </button>
+            <button type="button" data-ng-click="vm.showView('forms')"
+                    data-ng-disabled="vm.activeView === 'forms'">
+                Forms ({{vm.forms.length}})
             </button>
             <button type="button" data-ng-click="vm.showView('rules')"
                     data-ng-disabled="vm.activeView === 'rules'">
@@ -77,11 +86,6 @@
                     </tr>
                 </tbody>
             </table>
-        </div>
-
-        <div class="feedback-info">
-            School and condition columns describe stored configuration. They do
-            not evaluate visibility for an individual student.
         </div>
 
         <div id="enrollment-form-grid"
@@ -135,7 +139,7 @@
             <table class="grid">
                 <thead>
                     <tr>
-                        <th data-pss-sort-fields="form_title,numeric_position|number,element_id|number"
+                        <th data-pss-sort-fields="form_chain_id|number,form_display_order|number,numeric_position|number,element_id|number"
                             data-primary-sort="ascending">Form</th>
                         <th data-pss-sort-fields="numeric_position|number,element_id|number">Position</th>
                         <th data-pss-sort-fields="question_title">Question or element</th>

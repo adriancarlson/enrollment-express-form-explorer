@@ -138,15 +138,20 @@ as complete effective availability.
    visible; confirm the link is absent in a school context.
 2. Open `forms.json`, `rules.json`, and `questions.json` and confirm each returns
    a complete, valid JSON array, including `[]` when no records match.
-3. Compare query 01 with the intended enrollment form list.
-4. Run query 02 and reconcile its rows against query 01's element counts,
+3. Confirm Questions and Elements opens first, unpublished forms are hidden by
+   default, and Show Unpublished updates all three views.
+4. Compare the question grid against the displayed Enrollment Express form
+   sequence and each form's element order. The form sequence is derived from
+   `NEXT_FORM`; disconnected chains use stable form-ID fallbacks.
+5. Compare query 01 with the intended enrollment form list.
+6. Run query 02 and reconcile its rows against query 01's element counts,
    allowing one retained row for each empty form.
-5. Compare an ordinary form, a school-restricted form, a form restricted by
+7. Compare an ordinary form, a school-restricted form, a form restricted by
    student values, and a form with conditional questions against Form Builder
    and the relevant parent-facing context.
-6. Inspect individual sharing records with query 03 and composite configuration
+8. Inspect individual sharing records with query 03 and composite configuration
    using the applicable statement from query 04.
-7. Record verified behavior separately from assumptions before implementing
+9. Record verified behavior separately from assumptions before implementing
    dashboard labels such as "all schools" or "always visible."
 
 ## Dictionary reference map

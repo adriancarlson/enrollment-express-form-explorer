@@ -17,6 +17,12 @@ the plugin in PowerSchool is still required.
 - Inspect question details, mapped fields, answer choices, and display conditions.
 - Follow relationships between conditional questions and their controlling fields.
 
+The Questions and Elements grid is the default view. It initially includes only
+published forms; the **Show Unpublished** switch adds unpublished forms across
+all three views. Note elements are omitted from the question inventory. Question
+rows follow the stored `NEXT_FORM` chain and then each element's stored position,
+with IDs providing stable fallbacks when stored order is incomplete.
+
 The dashboard is intended for use by different districts. Form IDs, school IDs,
 and district-specific enrollment rules must come from each installation's
 configuration rather than hard-coded values.

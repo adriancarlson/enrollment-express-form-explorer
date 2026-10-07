@@ -10,15 +10,19 @@ define(function(require) {
         function($q, formInventoryService) {
             var vm = this;
 
-            vm.activeView = 'forms';
+            vm.activeView = 'questions';
             vm.loading = true;
             vm.loadError = false;
+            vm.showUnpublished = false;
+            vm.allForms = [];
             vm.forms = [];
             vm.visibleForms = [];
             vm.matchingForms = [];
+            vm.allRules = [];
             vm.rules = [];
             vm.visibleRules = [];
             vm.matchingRules = [];
+            vm.allQuestions = [];
             vm.questions = [];
             vm.visibleQuestions = [];
             vm.matchingQuestions = [];
@@ -52,6 +56,7 @@ define(function(require) {
 
             function normalizeForm(form) {
                 form.form_id = asNumber(form.form_id);
+                form.form_display_order = asNumber(form.form_display_order);
                 form.element_count = asNumber(form.element_count);
                 form.school_rule_count = asNumber(form.school_rule_count);
                 form.distinct_school_value_count = asNumber(form.distinct_school_value_count);
@@ -70,6 +75,8 @@ define(function(require) {
 
             function normalizeQuestion(question) {
                 question.form_id = asNumber(question.form_id);
+                question.form_chain_id = asNumber(question.form_chain_id);
+                question.form_display_order = asNumber(question.form_display_order);
                 question.element_id = asNumber(question.element_id);
                 question.numeric_position = /^\d+$/.test(String(question.stored_position || '')) ?
                     asNumber(question.stored_position) : null;
@@ -93,6 +100,18 @@ define(function(require) {
                 vm.activeView = view;
             };
 
+            vm.applyPublicationFilter = function() {
+                vm.forms = vm.allForms.filter(function(form) {
+                    return vm.showUnpublished || isTrue(form.publish);
+                });
+                vm.rules = vm.allRules.filter(function(rule) {
+                    return vm.showUnpublished || isTrue(rule.form_publish);
+                });
+                vm.questions = vm.allQuestions.filter(function(question) {
+                    return vm.showUnpublished || isTrue(question.form_publish);
+                });
+            };
+
             vm.retry = function() {
                 vm.loading = true;
                 vm.loadError = false;
@@ -105,19 +124,20 @@ define(function(require) {
                     formInventoryService.loadRules(),
                     formInventoryService.loadQuestions()
                 ]).then(function(results) {
-                    vm.forms = results[0].map(normalizeForm);
-                    vm.rules = results[1].map(normalizeRule);
-                    vm.questions = results[2].map(normalizeQuestion);
-                    angular.forEach(vm.rules, function(rule) {
+                    vm.allForms = results[0].map(normalizeForm);
+                    vm.allRules = results[1].map(normalizeRule);
+                    vm.allQuestions = results[2].map(normalizeQuestion);
+                    angular.forEach(vm.allRules, function(rule) {
                         if (rule.share_type) {
                             vm.ruleTypeMap[rule.share_type] = rule.share_type;
                         }
                     });
-                    angular.forEach(vm.questions, function(question) {
+                    angular.forEach(vm.allQuestions, function(question) {
                         if (question.element_type) {
                             vm.elementTypeMap[question.element_type] = question.element_type;
                         }
                     });
+                    vm.applyPublicationFilter();
                 }, function() {
                     vm.loadError = true;
                 }).finally(function() {
