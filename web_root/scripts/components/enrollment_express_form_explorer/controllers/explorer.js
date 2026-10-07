@@ -150,8 +150,8 @@ define(function(require) {
                         left.form_id - right.form_id ||
                         left.visual_parent_position - right.visual_parent_position ||
                         left.visual_child_rank - right.visual_child_rank ||
-                        left.visual_container_column - right.visual_container_column ||
                         left.visual_container_position - right.visual_container_position ||
+                        left.visual_container_column - right.visual_container_column ||
                         left.visual_stored_position - right.visual_stored_position ||
                         left.element_id - right.element_id;
                 });
