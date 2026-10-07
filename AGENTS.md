@@ -9,6 +9,9 @@ dashboard or changing the interpretation of form metadata.
   controllers, services, and reusable views under a project-specific component.
 - Keep the SQL Studio queries runnable independently. Do not silently change
   their scope or behavior when adding a dashboard data endpoint.
+- Use full table and CTE names in SQL. Introduce an alias only when it is
+  required to distinguish multiple references to the same table, and use a
+  descriptive alias in that case.
 - Inventory configuration only. Do not load student responses or evaluate a
   particular student's eligibility unless that work is explicitly requested.
 - Distinguish configured restrictions from verified effective visibility. Keep
