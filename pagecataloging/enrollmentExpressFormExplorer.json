@@ -4,7 +4,7 @@
             "htmlID": "enrollment-express-form-explorer",
             "title": "Enrollment Express Form Explorer",
             "pageURL": "/admin/enrollment_express_form_explorer/home.html",
-            "version": "0.3.13",
+            "version": "0.3.14",
             "contextType": "main",
             "sortOrder": 900,
             "parentHTMLID": "navDataAndReportingDataManagement",
