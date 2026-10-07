@@ -5,10 +5,11 @@ define(function(require) {
     var module = require('components/enrollment_express_form_explorer/module');
 
     module.controller('formExplorerController', [
+        '$scope',
         '$q',
         '$timeout',
         'formInventoryService',
-        function($q, $timeout, formInventoryService) {
+        function($scope, $q, $timeout, formInventoryService) {
             var vm = this;
 
             vm.activeView = 'questions';
@@ -28,7 +29,7 @@ define(function(require) {
             vm.allQuestions = [];
             vm.questions = [];
             vm.visibleQuestions = [];
-            vm.matchingQuestions = [];
+            vm.matchingQuestions = null;
             vm.yesNoMap = { Yes: 'Yes', No: 'No' };
             vm.schoolScopeMap = {
                 'Enabled with rules': 'Enabled with rules',
@@ -92,6 +93,17 @@ define(function(require) {
                 angular.forEach(rows, function(row) {
                     if (row.form_title) {
                         target[row.form_title] = row.form_title;
+                    }
+                });
+            }
+
+            function replaceElementTypeMap(rows) {
+                angular.forEach(vm.elementTypeMap, function(value, key) {
+                    delete vm.elementTypeMap[key];
+                });
+                angular.forEach(rows, function(question) {
+                    if (question.element_type_display) {
+                        vm.elementTypeMap[question.element_type_display] = question.element_type_display;
                     }
                 });
             }
@@ -252,6 +264,14 @@ define(function(require) {
                 });
             };
 
+            $scope.$watchCollection(function() {
+                return vm.matchingQuestions;
+            }, function(matchingQuestions) {
+                if (angular.isArray(matchingQuestions)) {
+                    replaceElementTypeMap(matchingQuestions);
+                }
+            });
+
             vm.retry = function() {
                 vm.loading = true;
                 vm.loadError = false;
@@ -272,11 +292,7 @@ define(function(require) {
                             vm.ruleTypeMap[rule.share_type] = rule.share_type;
                         }
                     });
-                    angular.forEach(vm.allQuestions, function(question) {
-                        if (question.element_type_display) {
-                            vm.elementTypeMap[question.element_type_display] = question.element_type_display;
-                        }
-                    });
+                    replaceElementTypeMap(vm.allQuestions);
                     vm.applyVisibilityFilters();
                 }, function() {
                     vm.loadError = true;
