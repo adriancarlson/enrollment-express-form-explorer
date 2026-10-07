@@ -48,12 +48,7 @@
             ON controlling_form_element.id = u_fb_form_element.wf_element_id
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
             AND u_fb_form.id > 0
-            AND u_fb_form_element.id > 0
             AND NVL(LOWER(TRIM(u_fb_form_element.element_type)), '') <> 'note'
-            AND NOT (
-                NVL(LOWER(TRIM(u_fb_form_element.containerenabled)), 'false') = 'true'
-                AND REGEXP_LIKE(TRIM(u_fb_form_element.containerid), '^-[0-9]+$')
-            )
     )
     SELECT COALESCE(
         JSON_ARRAYAGG(

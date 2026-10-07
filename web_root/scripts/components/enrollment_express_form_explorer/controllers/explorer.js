@@ -117,6 +117,10 @@ define(function(require) {
                 var currentFormId = null;
                 var displayPosition = 0;
 
+                function sortNumber(value) {
+                    return /^\d+$/.test(String(value || '')) ? asNumber(value) : Number.MAX_VALUE;
+                }
+
                 rows = rows.filter(function(question) {
                     return question.element_id > 0 && !(
                         isTrue(question.container_enabled) &&
@@ -128,27 +132,27 @@ define(function(require) {
                     elementMap[question.form_id + ':' + question.element_id] = question;
                 });
 
+                angular.forEach(rows, function(question) {
+                    var parentQuestion = isTrue(question.container_enabled) ?
+                        elementMap[question.form_id + ':' + question.container_id] : null;
+
+                    question.visual_parent_position = sortNumber(
+                        parentQuestion ? parentQuestion.stored_position : question.stored_position
+                    );
+                    question.visual_child_rank = parentQuestion ? 1 : 0;
+                    question.visual_container_column = sortNumber(question.container_column);
+                    question.visual_container_position = sortNumber(question.container_position);
+                    question.visual_stored_position = sortNumber(question.stored_position);
+                });
+
                 rows.sort(function(left, right) {
-                    function sortNumber(value) {
-                        return /^\d+$/.test(String(value || '')) ? asNumber(value) : Number.MAX_VALUE;
-                    }
-
-                    function parent(question) {
-                        return elementMap[question.form_id + ':' + question.container_id];
-                    }
-
-                    function visualParentPosition(question) {
-                        var parentQuestion = isTrue(question.container_enabled) ? parent(question) : null;
-                        return sortNumber(parentQuestion ? parentQuestion.stored_position : question.stored_position);
-                    }
-
                     return left.form_display_order - right.form_display_order ||
                         left.form_id - right.form_id ||
-                        visualParentPosition(left) - visualParentPosition(right) ||
-                        (parent(left) ? 1 : 0) - (parent(right) ? 1 : 0) ||
-                        sortNumber(left.container_column) - sortNumber(right.container_column) ||
-                        sortNumber(left.container_position) - sortNumber(right.container_position) ||
-                        sortNumber(left.stored_position) - sortNumber(right.stored_position) ||
+                        left.visual_parent_position - right.visual_parent_position ||
+                        left.visual_child_rank - right.visual_child_rank ||
+                        left.visual_container_column - right.visual_container_column ||
+                        left.visual_container_position - right.visual_container_position ||
+                        left.visual_stored_position - right.visual_stored_position ||
                         left.element_id - right.element_id;
                 });
 
