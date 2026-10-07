@@ -1,0 +1,24 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "buildplugin",
+            "type": "process",
+            "command": "py",
+            "args": [
+                "../../pluginpack.py",
+                "--with-version",
+                "--mask",
+                "(?i)(^|[\\\\/])(?:\\.git|\\.vscode|dist|docs|local|permissions_root|queries_root|sql)([\\\\/]|$)|(^|[\\\\/])(?:\\.gitignore|AGENTS\\.md|README\\.md|build\\.ps1)$"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

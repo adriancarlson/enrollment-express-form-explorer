@@ -101,10 +101,11 @@ district-specific validation results are not included in this repository.
 
 ## Build
 
-Run `./build.ps1` from PowerShell. The build uses a strict allowlist and packages
-only `plugin.xml`, `pagecataloging/`, and `web_root/`. Repository support files,
-including `.vscode/`, `.gitignore`, `AGENTS.md`, `README.md`, `docs/`, `sql/`,
-and local reference material, cannot enter the generated plugin ZIP.
+Run the default VS Code build task, `buildplugin`. The task calls the shared
+`pluginpack.py` with an exclusion mask so the installer contains the PowerSchool
+runtime files while omitting `.vscode/`, `.gitignore`, `AGENTS.md`, `README.md`,
+`docs/`, `sql/`, local reference material, and generated build folders. The
+versioned installer is written to `C:\powerschool_plugin_installers`.
 
 ## License
 
