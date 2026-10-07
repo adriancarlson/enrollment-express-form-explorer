@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin xmlns="http://plugin.powerschool.pearson.com"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd"
-    version="0.2.2"
-    name="Enrollment Express Form Explorer"
-    description="Read-only explorer for Enrollment Express forms, questions, school rules, and display conditions">
-    <publisher name="Adrian Carlson" />
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://plugin.powerschool.pearson.com plugin.xsd" version="0.2.3" name="Enrollment Express Form Explorer" description="Read-only explorer for Enrollment Express forms, questions, school rules, and display conditions">
+    <publisher name="Adrian Carlson">
+        <contact email="adrian-carlson@cdolinc.net"/>
+    </publisher>
 </plugin>
