@@ -79,6 +79,7 @@ define(function(require) {
 
             function normalizeForm(form) {
                 form.form_id = asNumber(form.form_id);
+                form.form_filter = form.form_title;
                 form.form_display_order = asNumber(form.form_display_order);
                 form.element_count = asNumber(form.element_count);
                 form.school_rule_count = asNumber(form.school_rule_count);
@@ -98,9 +99,11 @@ define(function(require) {
 
             function normalizeQuestion(question) {
                 question.form_id = asNumber(question.form_id);
+                question.form_filter = question.form_title;
                 question.form_display_order = asNumber(question.form_display_order);
                 question.element_id = asNumber(question.element_id);
-                question.numeric_position = asNumber(question.display_position);
+                question.numeric_position = /^\d+$/.test(String(question.stored_position || '')) ?
+                    asNumber(question.stored_position) : null;
                 question.required_display = normalizeBoolean(question.required);
                 question.workflow_display = normalizeBoolean(question.wf_enabled);
                 question.dependency_status = isTrue(question.wf_enabled) ?
@@ -109,8 +112,61 @@ define(function(require) {
                 return question;
             }
 
+            function prepareQuestions(rows) {
+                var elementMap = {};
+                var currentFormId = null;
+                var displayPosition = 0;
+
+                rows = rows.filter(function(question) {
+                    return question.element_id > 0 && !(
+                        isTrue(question.container_enabled) &&
+                        /^-\d+$/.test(String(question.container_id || ''))
+                    );
+                });
+
+                angular.forEach(rows, function(question) {
+                    elementMap[question.form_id + ':' + question.element_id] = question;
+                });
+
+                rows.sort(function(left, right) {
+                    function sortNumber(value) {
+                        return /^\d+$/.test(String(value || '')) ? asNumber(value) : Number.MAX_VALUE;
+                    }
+
+                    function parent(question) {
+                        return elementMap[question.form_id + ':' + question.container_id];
+                    }
+
+                    function visualParentPosition(question) {
+                        var parentQuestion = isTrue(question.container_enabled) ? parent(question) : null;
+                        return sortNumber(parentQuestion ? parentQuestion.stored_position : question.stored_position);
+                    }
+
+                    return left.form_display_order - right.form_display_order ||
+                        left.form_id - right.form_id ||
+                        visualParentPosition(left) - visualParentPosition(right) ||
+                        (parent(left) ? 1 : 0) - (parent(right) ? 1 : 0) ||
+                        sortNumber(left.container_column) - sortNumber(right.container_column) ||
+                        sortNumber(left.container_position) - sortNumber(right.container_position) ||
+                        sortNumber(left.stored_position) - sortNumber(right.stored_position) ||
+                        left.element_id - right.element_id;
+                });
+
+                angular.forEach(rows, function(question) {
+                    if (question.form_id !== currentFormId) {
+                        currentFormId = question.form_id;
+                        displayPosition = 0;
+                    }
+                    displayPosition += 1;
+                    question.numeric_position = displayPosition;
+                });
+
+                return rows;
+            }
+
             function normalizeRule(rule) {
                 rule.form_id = asNumber(rule.form_id);
+                rule.form_filter = rule.form_title;
                 rule.sharing_rule_id = asNumber(rule.sharing_rule_id);
                 rule.school_rule_status = String(rule.share_type || '').toLowerCase() === 'school' ?
                     (isTrue(rule.use_by_school_sharing) ? 'Enabled' : 'Configured, not enabled') : '';
@@ -161,7 +217,7 @@ define(function(require) {
                 ]).then(function(results) {
                     vm.allForms = results[0].map(normalizeForm);
                     vm.allRules = results[1].map(normalizeRule);
-                    vm.allQuestions = results[2].map(normalizeQuestion);
+                    vm.allQuestions = prepareQuestions(results[2].map(normalizeQuestion));
                     angular.forEach(vm.allRules, function(rule) {
                         if (rule.share_type) {
                             vm.ruleTypeMap[rule.share_type] = rule.share_type;

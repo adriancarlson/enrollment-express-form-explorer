@@ -12,7 +12,7 @@
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
             AND u_fb_form.id > 0
     ),
-    element_rows AS (
+    question_rows AS (
         SELECT
             u_fb_form.id AS form_id,
             TRIM(u_fb_form.form_title) AS form_title,
@@ -21,7 +21,6 @@
             form_order_rows.form_display_order,
             u_fb_form_element.id AS element_id,
             u_fb_form_element.position AS stored_position,
-            parent_form_element.position AS parent_stored_position,
             u_fb_form_element.element_type,
             u_fb_form_element.title AS question_title,
             u_fb_form_element.description AS question_description,
@@ -39,25 +38,7 @@
             CASE
                 WHEN REGEXP_LIKE(TRIM(u_fb_form_element.position), '^[0-9]{1,9}$')
                     THEN TO_NUMBER(TRIM(u_fb_form_element.position))
-            END AS numeric_position,
-            CASE
-                WHEN REGEXP_LIKE(TRIM(parent_form_element.position), '^[0-9]{1,9}$')
-                    THEN TO_NUMBER(TRIM(parent_form_element.position))
-                WHEN REGEXP_LIKE(TRIM(u_fb_form_element.position), '^[0-9]{1,9}$')
-                    THEN TO_NUMBER(TRIM(u_fb_form_element.position))
-            END AS visual_parent_position,
-            CASE
-                WHEN parent_form_element.id IS NULL THEN 0
-                ELSE 1
-            END AS visual_child_rank,
-            CASE
-                WHEN REGEXP_LIKE(TRIM(u_fb_form_element.containercolumn), '^[0-9]{1,9}$')
-                    THEN TO_NUMBER(TRIM(u_fb_form_element.containercolumn))
-            END AS visual_container_column,
-            CASE
-                WHEN REGEXP_LIKE(TRIM(u_fb_form_element.containerposition), '^[0-9]{1,9}$')
-                    THEN TO_NUMBER(TRIM(u_fb_form_element.containerposition))
-            END AS visual_container_position
+            END AS numeric_position
         FROM u_fb_form
         INNER JOIN u_fb_form_element
             ON u_fb_form_element.u_fb_form_id = u_fb_form.id
@@ -65,36 +46,14 @@
             ON form_order_rows.form_id = u_fb_form.id
         LEFT JOIN u_fb_form_element controlling_form_element
             ON controlling_form_element.id = u_fb_form_element.wf_element_id
-        LEFT JOIN u_fb_form_element parent_form_element
-            ON parent_form_element.id = CASE
-                WHEN REGEXP_LIKE(TRIM(u_fb_form_element.containerid), '^[0-9]{1,19}$')
-                    THEN TO_NUMBER(TRIM(u_fb_form_element.containerid))
-            END
-            AND parent_form_element.u_fb_form_id = u_fb_form.id
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
             AND u_fb_form.id > 0
             AND u_fb_form_element.id > 0
             AND NVL(LOWER(TRIM(u_fb_form_element.element_type)), '') <> 'note'
-            AND (
-                NVL(LOWER(TRIM(u_fb_form_element.containerenabled)), 'false') <> 'true'
-                OR parent_form_element.id > 0
+            AND NOT (
+                NVL(LOWER(TRIM(u_fb_form_element.containerenabled)), 'false') = 'true'
+                AND REGEXP_LIKE(TRIM(u_fb_form_element.containerid), '^-[0-9]+$')
             )
-    ),
-    question_rows AS (
-        SELECT
-            element_rows.*,
-            ROW_NUMBER() OVER (
-                PARTITION BY element_rows.form_id
-                ORDER BY
-                    element_rows.visual_parent_position NULLS LAST,
-                    element_rows.visual_child_rank,
-                    element_rows.visual_container_column NULLS LAST,
-                    element_rows.visual_container_position NULLS LAST,
-                    element_rows.numeric_position NULLS LAST,
-                    element_rows.stored_position NULLS LAST,
-                    element_rows.element_id
-            ) AS display_position
-        FROM element_rows
     )
     SELECT COALESCE(
         JSON_ARRAYAGG(
@@ -105,7 +64,6 @@
                 'form_type' VALUE question_rows.form_type,
                 'form_display_order' VALUE question_rows.form_display_order,
                 'element_id' VALUE question_rows.element_id,
-                'display_position' VALUE question_rows.display_position,
                 'stored_position' VALUE question_rows.stored_position,
                 'element_type' VALUE question_rows.element_type,
                 'question_title' VALUE question_rows.question_title,
@@ -126,7 +84,8 @@
             )
             ORDER BY question_rows.form_display_order NULLS LAST,
                 question_rows.form_id,
-                question_rows.display_position,
+                question_rows.numeric_position NULLS LAST,
+                question_rows.stored_position NULLS LAST,
                 question_rows.element_id
             RETURNING CLOB
         ),
