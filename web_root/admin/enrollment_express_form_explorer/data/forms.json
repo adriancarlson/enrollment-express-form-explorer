@@ -1,0 +1,52 @@
+~[tlist_sql;
+    WITH form_rows AS (
+        SELECT
+            u_fb_form.id AS form_id,
+            TRIM(u_fb_form.form_title) AS form_title,
+            u_fb_form.form_category,
+            u_fb_form.form_type,
+            u_fb_form.publish,
+            u_fb_form.use_by_school_sharing,
+            u_fb_form.sharing_parent,
+            (SELECT COUNT(*)
+                FROM u_fb_form_element
+                WHERE u_fb_form_element.u_fb_form_id = u_fb_form.id) AS element_count,
+            (SELECT COUNT(*)
+                FROM u_fb_form_sharing
+                WHERE u_fb_form_sharing.form_id = u_fb_form.id
+                    AND LOWER(TRIM(u_fb_form_sharing.share_type)) = 'school') AS school_rule_count,
+            (SELECT COUNT(DISTINCT TRIM(u_fb_form_sharing.share_value))
+                FROM u_fb_form_sharing
+                WHERE u_fb_form_sharing.form_id = u_fb_form.id
+                    AND LOWER(TRIM(u_fb_form_sharing.share_type)) = 'school') AS distinct_school_value_count,
+            (SELECT COUNT(*)
+                FROM u_fb_form_sharing
+                WHERE u_fb_form_sharing.form_id = u_fb_form.id
+                    AND LOWER(TRIM(u_fb_form_sharing.share_type)) = 'condition') AS condition_rule_count
+        FROM u_fb_form
+        WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+    )
+    SELECT COALESCE(
+        JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'form_id' VALUE form_rows.form_id,
+                'form_title' VALUE form_rows.form_title,
+                'form_category' VALUE form_rows.form_category,
+                'form_type' VALUE form_rows.form_type,
+                'publish' VALUE form_rows.publish,
+                'use_by_school_sharing' VALUE form_rows.use_by_school_sharing,
+                'sharing_parent' VALUE form_rows.sharing_parent,
+                'element_count' VALUE form_rows.element_count,
+                'school_rule_count' VALUE form_rows.school_rule_count,
+                'distinct_school_value_count' VALUE form_rows.distinct_school_value_count,
+                'condition_rule_count' VALUE form_rows.condition_rule_count
+                NULL ON NULL
+                RETURNING CLOB
+            )
+            ORDER BY form_rows.form_category NULLS LAST, form_rows.form_title, form_rows.form_id
+            RETURNING CLOB
+        ),
+        TO_CLOB(CHR(91) || CHR(93))
+    ) AS json_result
+    FROM form_rows
+;]~(data)[/tlist_sql]

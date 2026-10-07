@@ -134,15 +134,19 @@ as complete effective availability.
 
 ## Suggested live validation
 
-1. Compare query 01 with the intended enrollment form list.
-2. Run query 02 and reconcile its rows against query 01's element counts,
+1. Sign in as a district administrator at District Office and confirm the
+   Functions-page link is visible; confirm it is absent in a school context.
+2. Open `forms.json`, `rules.json`, and `questions.json` and confirm each returns
+   a complete, valid JSON array, including `[]` when no records match.
+3. Compare query 01 with the intended enrollment form list.
+4. Run query 02 and reconcile its rows against query 01's element counts,
    allowing one retained row for each empty form.
-3. Compare an ordinary form, a school-restricted form, a form restricted by
+5. Compare an ordinary form, a school-restricted form, a form restricted by
    student values, and a form with conditional questions against Form Builder
    and the relevant parent-facing context.
-4. Inspect individual sharing records with query 03 and composite configuration
+6. Inspect individual sharing records with query 03 and composite configuration
    using the applicable statement from query 04.
-5. Record verified behavior separately from assumptions before implementing
+7. Record verified behavior separately from assumptions before implementing
    dashboard labels such as "all schools" or "always visible."
 
 ## Dictionary reference map

@@ -1,0 +1,69 @@
+~[tlist_sql;
+    WITH question_rows AS (
+        SELECT
+            u_fb_form.id AS form_id,
+            TRIM(u_fb_form.form_title) AS form_title,
+            u_fb_form.publish AS form_publish,
+            u_fb_form_element.id AS element_id,
+            u_fb_form_element.position AS stored_position,
+            u_fb_form_element.element_type,
+            u_fb_form_element.title AS question_title,
+            u_fb_form_element.description AS question_description,
+            u_fb_form_element.required,
+            u_fb_form_element.student_field AS mapped_write_field,
+            u_fb_form_element.wf_enabled,
+            u_fb_form_element.wf_element_id AS controlling_element_id,
+            controller.title AS controlling_question,
+            u_fb_form_element.wf_value AS workflow_trigger_values,
+            controller.wf_enabled AS controller_wf_enabled,
+            u_fb_form_element.containerenabled AS container_enabled,
+            u_fb_form_element.containerid AS container_id,
+            u_fb_form_element.containercolumn AS container_column,
+            u_fb_form_element.containerposition AS container_position,
+            CASE
+                WHEN REGEXP_LIKE(TRIM(u_fb_form_element.position), '^[0-9]{1,9}$')
+                    THEN TO_NUMBER(TRIM(u_fb_form_element.position))
+            END AS numeric_position
+        FROM u_fb_form
+        INNER JOIN u_fb_form_element
+            ON u_fb_form_element.u_fb_form_id = u_fb_form.id
+        LEFT JOIN u_fb_form_element controller
+            ON controller.id = u_fb_form_element.wf_element_id
+        WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+    )
+    SELECT COALESCE(
+        JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'form_id' VALUE question_rows.form_id,
+                'form_title' VALUE question_rows.form_title,
+                'form_publish' VALUE question_rows.form_publish,
+                'element_id' VALUE question_rows.element_id,
+                'stored_position' VALUE question_rows.stored_position,
+                'element_type' VALUE question_rows.element_type,
+                'question_title' VALUE question_rows.question_title,
+                'question_description' VALUE question_rows.question_description,
+                'required' VALUE question_rows.required,
+                'mapped_write_field' VALUE question_rows.mapped_write_field,
+                'wf_enabled' VALUE question_rows.wf_enabled,
+                'controlling_element_id' VALUE question_rows.controlling_element_id,
+                'controlling_question' VALUE question_rows.controlling_question,
+                'workflow_trigger_values' VALUE question_rows.workflow_trigger_values,
+                'controller_wf_enabled' VALUE question_rows.controller_wf_enabled,
+                'container_enabled' VALUE question_rows.container_enabled,
+                'container_id' VALUE question_rows.container_id,
+                'container_column' VALUE question_rows.container_column,
+                'container_position' VALUE question_rows.container_position
+                NULL ON NULL
+                RETURNING CLOB
+            )
+            ORDER BY question_rows.form_title,
+                question_rows.form_id,
+                question_rows.numeric_position NULLS LAST,
+                question_rows.stored_position NULLS LAST,
+                question_rows.element_id
+            RETURNING CLOB
+        ),
+        TO_CLOB(CHR(91) || CHR(93))
+    ) AS json_result
+    FROM question_rows
+;]~(data)[/tlist_sql]

@@ -105,12 +105,13 @@ states. Preserve identifiers separately from labels. Render question text and
 stored expressions as text; do not compile metadata as Angular or insert it as
 trusted HTML.
 
-The final endpoint choice remains open. The MBA reference demonstrates schema
-query services, while existing projects also use relative JSON endpoints. First
-validate the inventory SQL in SQL Studio, then adapt it to a read-only endpoint
-with appropriate administrator permissions. A client-side school filter is not
-an authorization boundary. Never infer completeness from a truncated response;
-verify any endpoint's paging contract before using client-side pagination.
+The dashboard uses relative `data/*.json` endpoints backed by `tlist_sql`.
+Each endpoint returns a single JSON array using Oracle `JSON_ARRAYAGG` and
+`JSON_OBJECT`, with an empty-array fallback. The service accepts either an array
+already decoded by `$http` or a JSON text response. A client-side school filter
+is not an authorization boundary. Never infer completeness from a truncated
+response; validate the complete endpoint response before relying on client-side
+pagination.
 
 Avoid copying teaching-example errors: mismatched module names, resolving the
 wrong deferred promise, or closing a loading indicator before the request ends.

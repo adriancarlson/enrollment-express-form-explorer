@@ -6,32 +6,31 @@ define(function(require) {
     module.factory('formInventoryService', [
         '$http',
         function($http) {
-            var headers = {
-                Accept: 'application/json',
-                'Content-Type': 'application/json'
-            };
-
-            function query(name) {
-                return $http({
-                    method: 'POST',
-                    url: '/ws/schema/query/' + name,
-                    params: { pagesize: 0 },
-                    data: {},
-                    headers: headers
+            function load(fileName) {
+                return $http.get('data/' + fileName, {
+                    headers: { Accept: 'application/json' }
                 }).then(function(response) {
-                    return response.data.record || [];
+                    if (Array.isArray(response.data)) {
+                        return response.data;
+                    }
+
+                    if (typeof response.data === 'string' && response.data.trim()) {
+                        return JSON.parse(response.data);
+                    }
+
+                    return [];
                 });
             }
 
             return {
                 loadForms: function() {
-                    return query('com.adriancarlson.enrollment.formexplorer.forms');
+                    return load('forms.json');
                 },
                 loadRules: function() {
-                    return query('com.adriancarlson.enrollment.formexplorer.rules');
+                    return load('rules.json');
                 },
                 loadQuestions: function() {
-                    return query('com.adriancarlson.enrollment.formexplorer.questions');
+                    return load('questions.json');
                 }
             };
         }

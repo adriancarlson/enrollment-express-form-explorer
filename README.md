@@ -77,9 +77,13 @@ reference, and existing project patterns have been reviewed. See the
 [AngularJS and grid conventions](docs/angularjs-grid.md) for the implementation
 baseline and proposed forms, questions, and detail views.
 
-The initial page and two read-only named-query endpoints are implemented. Next,
-install the generated plugin in a test PowerSchool environment and validate the
-query responses, grid lifecycle, search, filters, and paging. Continue inspecting
+The initial page and three read-only `data/*.json` endpoints are implemented.
+Each endpoint uses a `tlist_sql` query with Oracle `JSON_ARRAYAGG` and
+`JSON_OBJECT`, so the dashboard does not require PowerQuery permissions. The
+Functions-page link is shown only in the District Office context and only when
+the administrator has permission to open the dashboard page. Next, install the
+generated plugin in a test PowerSchool environment and validate the JSON
+responses, grid lifecycle, search, filters, and paging. Continue inspecting
 installed form behavior to resolve contact fields, nested placement, and special
 workflow references before presenting those interpretations as definitive.
 
