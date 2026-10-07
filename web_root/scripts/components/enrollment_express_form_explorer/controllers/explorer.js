@@ -6,8 +6,9 @@ define(function(require) {
 
     module.controller('formExplorerController', [
         '$q',
+        '$timeout',
         'formInventoryService',
-        function($q, formInventoryService) {
+        function($q, $timeout, formInventoryService) {
             var vm = this;
 
             vm.activeView = 'questions';
@@ -15,6 +16,7 @@ define(function(require) {
             vm.loadError = false;
             vm.showUnpublished = false;
             vm.showPreEnrollments = false;
+            vm.gridReady = true;
             vm.allForms = [];
             vm.forms = [];
             vm.visibleForms = [];
@@ -136,6 +138,14 @@ define(function(require) {
                 replaceMap(vm.formMaps.forms, vm.forms);
                 replaceMap(vm.formMaps.rules, vm.rules);
                 replaceMap(vm.formMaps.questions, vm.questions);
+            };
+
+            vm.toggleVisibilityFilters = function() {
+                vm.applyVisibilityFilters();
+                vm.gridReady = false;
+                $timeout(function() {
+                    vm.gridReady = true;
+                });
             };
 
             vm.retry = function() {
