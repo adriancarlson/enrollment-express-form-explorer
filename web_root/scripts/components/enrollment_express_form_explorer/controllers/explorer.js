@@ -100,8 +100,7 @@ define(function(require) {
                 question.form_id = asNumber(question.form_id);
                 question.form_display_order = asNumber(question.form_display_order);
                 question.element_id = asNumber(question.element_id);
-                question.numeric_position = /^\d+$/.test(String(question.stored_position || '')) ?
-                    asNumber(question.stored_position) : null;
+                question.numeric_position = asNumber(question.display_position);
                 question.required_display = normalizeBoolean(question.required);
                 question.workflow_display = normalizeBoolean(question.wf_enabled);
                 question.dependency_status = isTrue(question.wf_enabled) ?
