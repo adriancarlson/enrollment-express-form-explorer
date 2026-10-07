@@ -114,6 +114,7 @@ define(function(require) {
 
             function prepareQuestions(rows) {
                 var elementMap = {};
+                var columnPositions = {};
                 var currentFormId = null;
                 var displayPosition = 0;
 
@@ -130,18 +131,34 @@ define(function(require) {
 
                 angular.forEach(rows, function(question) {
                     elementMap[question.form_id + ':' + question.element_id] = question;
+                    if (isTrue(question.container_enabled) && !/^-\d+$/.test(String(question.container_id || ''))) {
+                        var columnKey = question.form_id + ':' + question.container_id + ':' + question.container_column;
+                        columnPositions[columnKey] = columnPositions[columnKey] || [];
+                        if (columnPositions[columnKey].indexOf(sortNumber(question.container_position)) === -1) {
+                            columnPositions[columnKey].push(sortNumber(question.container_position));
+                        }
+                    }
+                });
+
+                angular.forEach(columnPositions, function(positions) {
+                    positions.sort(function(left, right) {
+                        return left - right;
+                    });
                 });
 
                 angular.forEach(rows, function(question) {
                     var parentQuestion = isTrue(question.container_enabled) ?
                         elementMap[question.form_id + ':' + question.container_id] : null;
+                    var columnKey = question.form_id + ':' + question.container_id + ':' + question.container_column;
+                    var positions = columnPositions[columnKey] || [];
 
                     question.visual_parent_position = sortNumber(
                         parentQuestion ? parentQuestion.stored_position : question.stored_position
                     );
                     question.visual_child_rank = parentQuestion ? 1 : 0;
                     question.visual_container_column = sortNumber(question.container_column);
-                    question.visual_container_position = sortNumber(question.container_position);
+                    question.visual_container_row = parentQuestion ?
+                        positions.indexOf(sortNumber(question.container_position)) + 1 : Number.MAX_VALUE;
                     question.visual_stored_position = sortNumber(question.stored_position);
                 });
 
@@ -150,7 +167,7 @@ define(function(require) {
                         left.form_id - right.form_id ||
                         left.visual_parent_position - right.visual_parent_position ||
                         left.visual_child_rank - right.visual_child_rank ||
-                        left.visual_container_position - right.visual_container_position ||
+                        left.visual_container_row - right.visual_container_row ||
                         left.visual_container_column - right.visual_container_column ||
                         left.visual_stored_position - right.visual_stored_position ||
                         left.element_id - right.element_id;
