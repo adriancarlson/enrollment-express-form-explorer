@@ -71,6 +71,10 @@
             z-index: 10;
         }
 
+        .explorer-grid tr.explorer-conditional-row td {
+            background-color: #fff2cc !important;
+        }
+
     </style>
 </head>
 <body data-require-path="components/enrollment_express_form_explorer/index"
@@ -270,7 +274,8 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr data-ng-repeat="question in vm.visibleQuestions track by question.element_id">
+                    <tr data-ng-repeat="question in vm.visibleQuestions track by question.element_id"
+                        data-ng-class="{'explorer-conditional-row': question.workflow_display === 'Yes'}">
                         <td data-ng-bind="question.form_title"></td>
                         <td data-ng-bind="question.numeric_position"></td>
                         <td data-ng-bind="question.question_title"></td>
