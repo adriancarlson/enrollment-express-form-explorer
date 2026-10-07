@@ -9,7 +9,12 @@
         .explorer-switch-row {
             display: flex;
             justify-content: flex-end;
+            margin-top: -22px;
             padding-right: 1rem;
+        }
+
+        .explorer-switch-spaced {
+            margin-right: 1rem;
         }
 
         .explorer-switch-row .form-check {
@@ -71,15 +76,6 @@
 
     <h1>Enrollment Express Form Explorer</h1>
 
-    <div class="explorer-switch-row">
-        <div class="form-check form-switch">
-            <input class="form-check-input" type="checkbox" id="showUnpublishedSwitch"
-                   data-ng-model="vm.showUnpublished"
-                   data-ng-change="vm.applyPublicationFilter()">
-            <label class="form-check-label" for="showUnpublishedSwitch">Show Unpublished</label>
-        </div>
-    </div>
-
     <div data-ng-if="vm.loading">
         <div class="progress" data-pss-wait-spinner></div>
         <div class="feedback-info">Loading enrollment form configuration...</div>
@@ -112,9 +108,26 @@
              data-data="vm.rules"
              data-filtered-data="vm.visibleRules"
              data-filtertap-data-sorted="vm.matchingRules"
+             data-filter-constraint="advanced-only"
              data-client-side-pagination="true"
              data-persist-rows-per-page="true"
              data-item-type-text="Rules">
+            <label data-pss-filter-field="form_title|multiselect"
+                   data-filter-info="vm.formMaps.rules" data-default-filter="normal">Form</label>
+            <div class="explorer-switch-row">
+                <div class="form-check form-switch explorer-switch-spaced">
+                    <input class="form-check-input" type="checkbox" id="rulesPreEnrollmentSwitch"
+                           data-ng-model="vm.showPreEnrollments"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="rulesPreEnrollmentSwitch">Show Pre-Enrollments</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="rulesUnpublishedSwitch"
+                           data-ng-model="vm.showUnpublished"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="rulesUnpublishedSwitch">Show Unpublished</label>
+                </div>
+            </div>
             <table class="grid">
                 <thead>
                     <tr>
@@ -149,9 +162,26 @@
              data-data="vm.forms"
              data-filtered-data="vm.visibleForms"
              data-filtertap-data-sorted="vm.matchingForms"
+             data-filter-constraint="advanced-only"
              data-client-side-pagination="true"
              data-persist-rows-per-page="true"
              data-item-type-text="Forms">
+            <label data-pss-filter-field="form_title|multiselect"
+                   data-filter-info="vm.formMaps.forms" data-default-filter="normal">Form</label>
+            <div class="explorer-switch-row">
+                <div class="form-check form-switch explorer-switch-spaced">
+                    <input class="form-check-input" type="checkbox" id="formsPreEnrollmentSwitch"
+                           data-ng-model="vm.showPreEnrollments"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="formsPreEnrollmentSwitch">Show Pre-Enrollments</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="formsUnpublishedSwitch"
+                           data-ng-model="vm.showUnpublished"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="formsUnpublishedSwitch">Show Unpublished</label>
+                </div>
+            </div>
             <table class="grid">
                 <thead>
                     <tr>
@@ -171,6 +201,7 @@
                     <tr data-ng-repeat="form in vm.visibleForms track by form.form_id">
                         <td>
                             <a data-ng-href="/admin/formbuilder/edit.html?formid={{form.form_id}}"
+                               target="_blank" rel="noopener"
                                data-ng-bind="form.form_title"></a>
                         </td>
                         <td data-ng-bind="form.form_category"></td>
@@ -191,9 +222,26 @@
              data-data="vm.questions"
              data-filtered-data="vm.visibleQuestions"
              data-filtertap-data-sorted="vm.matchingQuestions"
+             data-filter-constraint="advanced-only"
              data-client-side-pagination="true"
              data-persist-rows-per-page="true"
              data-item-type-text="Questions and Elements">
+            <label data-pss-filter-field="form_title|multiselect"
+                   data-filter-info="vm.formMaps.questions" data-default-filter="normal">Form</label>
+            <div class="explorer-switch-row">
+                <div class="form-check form-switch explorer-switch-spaced">
+                    <input class="form-check-input" type="checkbox" id="questionsPreEnrollmentSwitch"
+                           data-ng-model="vm.showPreEnrollments"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="questionsPreEnrollmentSwitch">Show Pre-Enrollments</label>
+                </div>
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="questionsUnpublishedSwitch"
+                           data-ng-model="vm.showUnpublished"
+                           data-ng-change="vm.applyVisibilityFilters()">
+                    <label class="form-check-label" for="questionsUnpublishedSwitch">Show Unpublished</label>
+                </div>
+            </div>
             <table class="grid">
                 <thead>
                     <tr>

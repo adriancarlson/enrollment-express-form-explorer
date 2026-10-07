@@ -14,6 +14,7 @@ define(function(require) {
             vm.loading = true;
             vm.loadError = false;
             vm.showUnpublished = false;
+            vm.showPreEnrollments = false;
             vm.allForms = [];
             vm.forms = [];
             vm.visibleForms = [];
@@ -40,6 +41,11 @@ define(function(require) {
             };
             vm.elementTypeMap = {};
             vm.ruleTypeMap = {};
+            vm.formMaps = {
+                forms: {},
+                rules: {},
+                questions: {}
+            };
 
             function asNumber(value) {
                 var number = Number(value);
@@ -48,6 +54,21 @@ define(function(require) {
 
             function isTrue(value) {
                 return String(value || '').toLowerCase() === 'true';
+            }
+
+            function isPreEnrollment(formType) {
+                return String(formType || '').toUpperCase() === 'PR';
+            }
+
+            function replaceMap(target, rows) {
+                angular.forEach(target, function(value, key) {
+                    delete target[key];
+                });
+                angular.forEach(rows, function(row) {
+                    if (row.form_title) {
+                        target[row.form_title] = row.form_title;
+                    }
+                });
             }
 
             function normalizeBoolean(value) {
@@ -99,16 +120,22 @@ define(function(require) {
                 vm.activeView = view;
             };
 
-            vm.applyPublicationFilter = function() {
+            vm.applyVisibilityFilters = function() {
                 vm.forms = vm.allForms.filter(function(form) {
-                    return vm.showUnpublished || isTrue(form.publish);
+                    return (vm.showUnpublished || isTrue(form.publish)) &&
+                        (vm.showPreEnrollments || !isPreEnrollment(form.form_type));
                 });
                 vm.rules = vm.allRules.filter(function(rule) {
-                    return vm.showUnpublished || isTrue(rule.form_publish);
+                    return (vm.showUnpublished || isTrue(rule.form_publish)) &&
+                        (vm.showPreEnrollments || !isPreEnrollment(rule.form_type));
                 });
                 vm.questions = vm.allQuestions.filter(function(question) {
-                    return vm.showUnpublished || isTrue(question.form_publish);
+                    return (vm.showUnpublished || isTrue(question.form_publish)) &&
+                        (vm.showPreEnrollments || !isPreEnrollment(question.form_type));
                 });
+                replaceMap(vm.formMaps.forms, vm.forms);
+                replaceMap(vm.formMaps.rules, vm.rules);
+                replaceMap(vm.formMaps.questions, vm.questions);
             };
 
             vm.retry = function() {
@@ -136,7 +163,7 @@ define(function(require) {
                             vm.elementTypeMap[question.element_type] = question.element_type;
                         }
                     });
-                    vm.applyPublicationFilter();
+                    vm.applyVisibilityFilters();
                 }, function() {
                     vm.loadError = true;
                 }).finally(function() {

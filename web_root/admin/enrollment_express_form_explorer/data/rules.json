@@ -3,6 +3,7 @@
         SELECT
             u_fb_form.id AS form_id,
             TRIM(u_fb_form.form_title) AS form_title,
+            u_fb_form.form_type,
             u_fb_form.use_by_school_sharing,
             u_fb_form.publish AS form_publish,
             u_fb_form_sharing.id AS sharing_rule_id,
@@ -15,12 +16,14 @@
         INNER JOIN u_fb_form_sharing
             ON u_fb_form_sharing.form_id = u_fb_form.id
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+            AND u_fb_form.id > 0
     )
     SELECT COALESCE(
         JSON_ARRAYAGG(
             JSON_OBJECT(
                 'form_id' VALUE rule_rows.form_id,
                 'form_title' VALUE rule_rows.form_title,
+                'form_type' VALUE rule_rows.form_type,
                 'use_by_school_sharing' VALUE rule_rows.use_by_school_sharing,
                 'form_publish' VALUE rule_rows.form_publish,
                 'sharing_rule_id' VALUE rule_rows.sharing_rule_id,

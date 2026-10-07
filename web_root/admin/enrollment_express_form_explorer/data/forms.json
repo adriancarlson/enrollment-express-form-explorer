@@ -3,6 +3,12 @@
         SELECT
             u_fb_form.id AS form_id,
             TRIM(u_fb_form.form_title) AS form_title,
+            ROW_NUMBER() OVER (
+                ORDER BY
+                    NVL(u_fb_form.form_category, '0'),
+                    u_fb_form.form_title,
+                    u_fb_form.id
+            ) AS form_display_order,
             u_fb_form.form_category,
             u_fb_form.form_type,
             u_fb_form.publish,
@@ -25,12 +31,14 @@
                     AND LOWER(TRIM(u_fb_form_sharing.share_type)) = 'condition') AS condition_rule_count
         FROM u_fb_form
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+            AND u_fb_form.id > 0
     )
     SELECT COALESCE(
         JSON_ARRAYAGG(
             JSON_OBJECT(
                 'form_id' VALUE form_rows.form_id,
                 'form_title' VALUE form_rows.form_title,
+                'form_display_order' VALUE form_rows.form_display_order,
                 'form_category' VALUE form_rows.form_category,
                 'form_type' VALUE form_rows.form_type,
                 'publish' VALUE form_rows.publish,
@@ -43,7 +51,7 @@
                 NULL ON NULL
                 RETURNING CLOB
             )
-            ORDER BY form_rows.form_category NULLS LAST, form_rows.form_title, form_rows.form_id
+            ORDER BY form_rows.form_display_order
             RETURNING CLOB
         ),
         TO_CLOB(CHR(91) || CHR(93))

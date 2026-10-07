@@ -10,12 +10,14 @@
             ) AS form_display_order
         FROM u_fb_form
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+            AND u_fb_form.id > 0
     ),
     question_rows AS (
         SELECT
             u_fb_form.id AS form_id,
             TRIM(u_fb_form.form_title) AS form_title,
             u_fb_form.publish AS form_publish,
+            u_fb_form.form_type,
             form_order_rows.form_display_order,
             u_fb_form_element.id AS element_id,
             u_fb_form_element.position AS stored_position,
@@ -45,6 +47,7 @@
         LEFT JOIN u_fb_form_element controlling_form_element
             ON controlling_form_element.id = u_fb_form_element.wf_element_id
         WHERE LOWER(TRIM(u_fb_form.enrollmentformcheck)) = 'true'
+            AND u_fb_form.id > 0
             AND NVL(LOWER(TRIM(u_fb_form_element.element_type)), '') <> 'note'
     )
     SELECT COALESCE(
@@ -53,6 +56,7 @@
                 'form_id' VALUE question_rows.form_id,
                 'form_title' VALUE question_rows.form_title,
                 'form_publish' VALUE question_rows.form_publish,
+                'form_type' VALUE question_rows.form_type,
                 'form_display_order' VALUE question_rows.form_display_order,
                 'element_id' VALUE question_rows.element_id,
                 'stored_position' VALUE question_rows.stored_position,
