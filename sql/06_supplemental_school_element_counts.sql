@@ -63,6 +63,7 @@ FROM schools
 LEFT JOIN school_element_rows
     ON school_element_rows.school_number = schools.school_number
 WHERE schools.school_number > 0
+    AND schools.school_number NOT IN (888888, 79438, 999999, 103, 106)
 GROUP BY
     schools.school_number,
     schools.name
