@@ -67,6 +67,7 @@ WHERE schools.school_number > 0
 GROUP BY
     schools.school_number,
     schools.name
+HAVING COUNT(DISTINCT school_element_rows.element_id) > 0
 ORDER BY
     COUNT(DISTINCT school_element_rows.element_id),
     schools.name,
