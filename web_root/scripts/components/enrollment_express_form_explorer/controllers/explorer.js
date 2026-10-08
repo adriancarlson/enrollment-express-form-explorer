@@ -3,6 +3,7 @@
 define(function(require) {
     var angular = require('angular');
     var module = require('components/enrollment_express_form_explorer/module');
+    var PaginationHelper = require('components/widgets/models/PaginationHelper');
 
     module.controller('formExplorerController', [
         '$scope',
@@ -18,6 +19,12 @@ define(function(require) {
             vm.showUnpublished = false;
             vm.showPreEnrollments = false;
             vm.gridReady = true;
+            vm.rulesPagination = new PaginationHelper();
+            vm.rulesPagination.rowsPerPage = 100;
+            vm.formsPagination = new PaginationHelper();
+            vm.formsPagination.rowsPerPage = 100;
+            vm.questionsPagination = new PaginationHelper();
+            vm.questionsPagination.rowsPerPage = 100;
             vm.allForms = [];
             vm.forms = [];
             vm.visibleForms = [];
