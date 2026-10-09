@@ -1,14 +1,14 @@
 {
-    "pages": [
-        {
-            "htmlID": "enrollment-express-form-explorer",
-            "title": "Enrollment Express Form Explorer",
-            "pageURL": "/admin/enrollment_express_form_explorer/home.html",
-            "version": "0.3.18",
-            "contextType": "main",
-            "sortOrder": 900,
-            "parentHTMLID": "navDataAndReportingDataManagement",
-            "districtLevelContext": 1
-        }
-    ]
+	"pages": [
+		{
+			"htmlID": "form-explorer",
+			"title": "Form Explorer",
+			"version": "0.3.19",
+			"contextType": "main",
+			"parentHTMLID": "navEecForms",
+			"pageURL": "/admin/enrollment_express_form_explorer/home.html",
+			"sortOrder": 2000,
+			"districtLevelContext": 2
+		}
+	]
 }
