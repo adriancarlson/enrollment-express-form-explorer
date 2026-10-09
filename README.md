@@ -1,11 +1,11 @@
 # Enrollment Express Form Explorer
 
-> **Deprecated:** The dashboard runtime moved to
+> [!WARNING]
+> This repository was retired on October 9, 2026. The dashboard runtime moved to
 > [`adriancarlson/cdol_enrollment_express_modules`](https://github.com/adriancarlson/cdol_enrollment_express_modules)
-> on October 9, 2026. Continue dashboard development in that repository. This
-> repository remains available temporarily for its standalone SQL research,
-> documentation, and development history and can be archived after the combined
-> plugin and manually added Page Catalog link are verified in PowerSchool.
+> and is no longer maintained here. This repository is preserved as a read-only
+> historical reference for its standalone SQL research, documentation, and
+> development history.
 
 A PowerSchool dashboard for exploring Enrollment Express forms,
 questions, school availability, and conditional display logic.
